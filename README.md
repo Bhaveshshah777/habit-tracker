@@ -26,7 +26,7 @@ habit-tracker/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/habit-tracker.git
+git clone https://github.com/Bhaveshshah777/habit-tracker.git
 cd habit-tracker
 ```
 
