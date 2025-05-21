@@ -1,0 +1,49 @@
+# .NET build artifacts
+**/bin/
+**/obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code settings
+.vscode/
+
+# Rider IDE
+.idea/
+
+# MacOS and Linux system files
+.DS_Store
+*.swp
+*.swo
+
+# Logs
+**/*.log
+
+# Environment files
+.env
+.env.*
+
+# Docker
+**/Dockerfile
+**/docker-compose.override.yml
+docker-compose.override.yml
+
+# Build output
+/app/publish/
+**/publish/
+
+# SQL migration artifacts (if any temp files)
+**/Migrations/*.sql~
+
+# Node modules (in case of any frontend services in future)
+**/node_modules/
+
+# Others
+*.db
+*.sqlite
+
+# Optional: exclude Postgres/Redis/Kafka volumes if mapped to host
+volumes/

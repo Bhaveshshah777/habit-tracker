@@ -1,0 +1,63 @@
+services:
+  postgres:
+    image: postgres:17
+    restart: none
+    container_name: habit-db
+    environment:
+      POSTGRES_USER: habituser
+      POSTGRES_PASSWORD: habitpass
+      POSTGRES_DB: habitdb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - habit-net
+    ports:
+      - "5432:5432"
+  migration-service:
+    build: ./migration-service
+    environment:
+      - POSTGRES_CONNECTION=${POSTGRES_CONNECTION}
+    depends_on:
+      - postgres
+  gateway:
+    build: ./gateway
+    ports:
+      - "7110:443"
+    environment:
+      - ASPNETCORE_URLS=https://+:443
+      - ASPNETCORE_FORWARDEDHEADERS_ENABLED=true
+      - POSTGRES_CONNECTION=${POSTGRES_CONNECTION}
+    depends_on:
+      - migration-service
+    networks:
+      - habit-net
+    volumes:
+      - ./gateway/certs/localhost.p12:/https/localhost.p12:ro
+  habit-service:
+    image: alpine
+    command: tail -f /dev/null
+    networks:
+      - habit-net
+  tracking-service:
+    image: alpine
+    command: tail -f /dev/null
+    networks:
+      - habit-net
+  user-service:
+    build: ./user-service
+    ports:
+      - "5272:80"
+    environment:
+      - ASPNETCORE_URLS=http://+:80
+      - POSTGRES_CONNECTION=${POSTGRES_CONNECTION}
+    depends_on:
+      - migration-service
+    networks:
+      - habit-net
+
+networks:
+  habit-net:
+    driver: bridge
+
+volumes:
+  pgdata:

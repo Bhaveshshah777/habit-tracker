@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "user-service"
+		},
+		{
+			"path": "habit-service"
+		},
+		{
+			"path": "tracking-service"
+		},
+		{
+			"path": "gateway"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {}
+}
