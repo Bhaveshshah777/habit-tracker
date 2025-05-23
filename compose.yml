@@ -19,6 +19,9 @@ services:
       - POSTGRES_CONNECTION=${POSTGRES_CONNECTION}
     depends_on:
       - postgres
+    networks:
+      - habit-net
+
   gateway:
     build: ./gateway
     ports:
@@ -27,6 +30,8 @@ services:
       - ASPNETCORE_URLS=https://+:443
       - ASPNETCORE_FORWARDEDHEADERS_ENABLED=true
       - POSTGRES_CONNECTION=${POSTGRES_CONNECTION}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
     depends_on:
       - migration-service
     networks:

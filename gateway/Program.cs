@@ -14,6 +14,9 @@ builder.WebHost.UseUrls(Environment.GetEnvironmentVariable("ASPNETCORE_URLS") ??
 var jwtSetting = builder.Configuration.GetSection("Authentication:Jwt");
 var googleSetting = builder.Configuration.GetSection("Authentication:Google");
 
+var googleClientId = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID");
+var googleClientSecret = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRET");
+
 builder.Services.AddReverseProxy()
     .LoadFromConfig(
         builder.Configuration.GetSection("ReverseProxy")
@@ -38,8 +41,8 @@ builder.Services.AddAuthentication(options =>
 .AddCookie()
 .AddOpenIdConnect("Google", options =>
 {
-    options.ClientId = googleSetting["ClientId"];
-    options.ClientSecret = googleSetting["ClientSecret"];
+    options.ClientId = googleClientId;
+    options.ClientSecret = googleClientSecret;
     options.Authority = googleSetting["Authority"];
     options.CallbackPath = googleSetting["CallbackPath"];
     options.SaveTokens = true;
@@ -55,7 +58,7 @@ builder.Services.AddAuthentication(options =>
 .AddJwtBearer("Bearer", jwtOptions =>
 {
     jwtOptions.Authority = jwtSetting["Authority"];
-    jwtOptions.Audience = jwtSetting["Audience"];
+    jwtOptions.Audience = googleClientId;
     jwtOptions.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
