@@ -4,11 +4,16 @@ using Npgsql;
 using UserService.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
+
+string? connectionString = builder.Configuration["POSTGRES_CONNECTION"];
+if (string.IsNullOrEmpty(connectionString))
+    throw new Exception("User:Connection string missing.");
+
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<IDbConnection>(sp =>
-    new NpgsqlConnection(Environment.GetEnvironmentVariable("POSTGRES_CONNECTION")));
+    new NpgsqlConnection(connectionString));
 builder.Services.AddScoped<UserRepo>();
 builder.Services.AddControllers();
 builder.Services.AddAuthentication("Bearer")

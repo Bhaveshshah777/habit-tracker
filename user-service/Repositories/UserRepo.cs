@@ -14,7 +14,9 @@ public class UserRepo
     #region Constructor
     public UserRepo(IConfiguration config)
     {
-        cs = config.GetConnectionString("DefaultConnection");
+        cs = config["POSTGRES_CONNECTION"];
+        if (string.IsNullOrEmpty(cs))
+            throw new Exception("User: POSTGRES_CONNECTION is not set.");
     }
     #endregion
 
