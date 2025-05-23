@@ -8,7 +8,7 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<IDbConnection>(sp =>
-    new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
+    new NpgsqlConnection(Environment.GetEnvironmentVariable("POSTGRES_CONNECTION")));
 builder.Services.AddScoped<UserRepo>();
 builder.Services.AddControllers();
 builder.Services.AddAuthentication("Bearer")

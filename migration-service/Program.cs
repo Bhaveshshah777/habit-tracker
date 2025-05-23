@@ -6,28 +6,35 @@ if (string.IsNullOrEmpty(connectionString))
 
 NpgsqlConnection? conn = null;
 
-try
+int retries = 10;
+while (retries > 0)
 {
-    conn = new NpgsqlConnection(connectionString);
-    conn.Open();
+    try
+    {
+        conn = new NpgsqlConnection(connectionString);
+        conn.Open();
 
-    foreach (var file in Directory.GetFiles("Migrations", "*.sql"))
-    {
-        var sql = File.ReadAllText(file);
-        using var cmd = new NpgsqlCommand(sql, conn);
-        cmd.ExecuteNonQuery();
-        Console.WriteLine($"✅ Executed {Path.GetFileName(file)}");
+        foreach (var file in Directory.GetFiles("Migrations", "*.sql"))
+        {
+            var sql = File.ReadAllText(file);
+            using var cmd = new NpgsqlCommand(sql, conn);
+            cmd.ExecuteNonQuery();
+            Console.WriteLine($"✅ Executed {Path.GetFileName(file)}");
+        }
     }
-}
-catch (Exception ex)
-{
-    Console.WriteLine($"❌ Migration failed: {ex.Message}");
-}
-finally
-{
-    if (conn is { State: System.Data.ConnectionState.Open })
+    catch (Exception ex)
     {
-        conn.Close();
-        Console.WriteLine("🔌 Connection closed.");
+        Console.WriteLine("PostgreSQL is still starting up...");
+        retries--;
+        Thread.Sleep(2000);
+    }
+    finally
+    {
+        if (conn is { State: System.Data.ConnectionState.Open })
+        {
+            conn.Close();
+            Console.WriteLine("🔌 Connection closed.");
+            retries = 0;
+        }
     }
 }
