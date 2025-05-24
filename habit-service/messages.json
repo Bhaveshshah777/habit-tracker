@@ -1,0 +1,11 @@
+{
+    "HabitNotFound": "Habit with ID '{0}' not found.",
+    "ErrorFetchingHabits": "Error fetching habits: {0}",
+    "ErrorCreatingHabit": "Error creating habit: {0}",
+    "HabitCreated": "Habit '{0}' created successfully.",
+    "HabitUpdated": "Habit '{0}' updated successfully.",
+    "HabitDeleted": "Deleted {0} habit(s) successfully.",
+    "HabitCannotBeNull": "Habit cannot be null",
+    "HabitIdsCannotBeNull": "Habit IDs cannot be null",
+    "NothingToDelete": "Nothing to delete, no habit IDs provided."
+}

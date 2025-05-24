@@ -29,7 +29,7 @@ public class UserRepo
     public async Task<User?> FetchUserDetails(string email)
     {
         await using var con = new NpgsqlConnection(cs);
-        var query = "SELECT name, email FROM users WHERE email = @Email";
+        var query = "SELECT id, name, email FROM users WHERE email = @Email";
         return await con.QuerySingleOrDefaultAsync<User>(query, new { Email = email });
     }
 
