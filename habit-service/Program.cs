@@ -30,6 +30,8 @@ builder.Services.AddAuthentication("Bearer")
 builder.Services.ServiceInjector();
 builder.Services.AddAuthorization();
 
+Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+
 //adding messages
 var messages = JsonSerializer.Deserialize<Dictionary<string, string>>(
     File.ReadAllText("messages.json"));

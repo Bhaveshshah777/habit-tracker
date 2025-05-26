@@ -49,8 +49,14 @@ services:
     networks:
       - habit-net
   tracking-service:
-    image: alpine
-    command: tail -f /dev/null
+    build: ./tracking-service
+    ports:
+      - "5151:80"
+    environment:
+      - ASPNETCORE_URLS=http://+:80
+      - POSTGRES_CONNECTION=${POSTGRES_CONNECTION}
+    depends_on:
+      - migration-service
     networks:
       - habit-net
   user-service:
