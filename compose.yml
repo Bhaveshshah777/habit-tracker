@@ -31,6 +31,7 @@ services:
       - POSTGRES_CONNECTION=${POSTGRES_CONNECTION}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - REDIS_CONNECTION=${REDIS_CONNECTION}
     depends_on:
       - migration-service
     networks:
@@ -71,9 +72,20 @@ services:
     networks:
       - habit-net
 
+  redis:
+    image: redis:8.0.1-alpine
+    container_name: redis
+    networks:
+      - habit-net
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
 networks:
   habit-net:
     driver: bridge
 
 volumes:
   pgdata:
+  redis_data:
