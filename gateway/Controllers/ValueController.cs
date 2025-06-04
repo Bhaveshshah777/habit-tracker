@@ -62,7 +62,7 @@ public class ValueController : ControllerBase
     public async Task<IActionResult> GetToken()
     {
         string? idToken = await HttpContext.GetTokenAsync("id_token");
-        string? refreshToken = await HttpContext.GetTokenAsync("id_token");
+        string? refreshToken = await HttpContext.GetTokenAsync("refresh_token");
 
         return Ok(new { IdToken = idToken, Refresh_Token = refreshToken });
     }

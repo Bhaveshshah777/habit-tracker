@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "migration-service", "migrat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "habit-service", "habit-service\habit-service.csproj", "{E6120F8A-2C3B-481F-B593-4799D86B4E6B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "notification-service", "notification-service\notification-service.csproj", "{74D63652-9D59-47C3-8FCE-D27555C751E5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +40,10 @@ Global
 		{E6120F8A-2C3B-481F-B593-4799D86B4E6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E6120F8A-2C3B-481F-B593-4799D86B4E6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E6120F8A-2C3B-481F-B593-4799D86B4E6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74D63652-9D59-47C3-8FCE-D27555C751E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74D63652-9D59-47C3-8FCE-D27555C751E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74D63652-9D59-47C3-8FCE-D27555C751E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74D63652-9D59-47C3-8FCE-D27555C751E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

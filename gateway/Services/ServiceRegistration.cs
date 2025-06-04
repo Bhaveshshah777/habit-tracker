@@ -2,6 +2,7 @@ using Gateway.Interfaces;
 using Gateway.Middlewares;
 
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 
@@ -70,6 +71,15 @@ public static class ServiceRegistration
             options.Scope.Add("openid");
             options.Scope.Add("email");
             options.Scope.Add("profile");
+
+            options.Events = new OpenIdConnectEvents
+            {
+                OnRedirectToIdentityProvider = context =>
+                {
+                    context.ProtocolMessage.SetParameter("access_type", "offline");
+                    return Task.CompletedTask;
+                }
+            };
         })
         .AddJwtBearer("Bearer", jwtOptions =>
         {
