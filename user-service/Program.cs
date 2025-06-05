@@ -1,6 +1,8 @@
 using System.Data;
 using Microsoft.IdentityModel.Tokens;
 using Npgsql;
+using user_service.Kafka.Producer;
+using UserService.Kafka.Interface;
 using UserService.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +18,11 @@ builder.Services.AddScoped<IDbConnection>(sp =>
     new NpgsqlConnection(connectionString));
 builder.Services.AddScoped<UserRepo>();
 builder.Services.AddControllers();
+
+builder.Services.AddSingleton<IKafkaProducer>(new KafkaProducer(
+    bootstrapServer: "kafka:9092"
+));
+
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {

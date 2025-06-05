@@ -1,6 +1,8 @@
 using System.Data;
 using Dapper;
 using Npgsql;
+using UserService.Kafka.Events;
+using UserService.Kafka.Interface;
 using UserService.Models;
 
 namespace UserService.Repositories;
@@ -9,14 +11,16 @@ public class UserRepo
 {
     #region Fields
     private readonly string? cs;
+    private readonly IKafkaProducer _kafkaProducer;
     #endregion
 
     #region Constructor
-    public UserRepo(IConfiguration config)
+    public UserRepo(IConfiguration config, IKafkaProducer kafkaProducer)
     {
         cs = config["POSTGRES_CONNECTION"];
         if (string.IsNullOrEmpty(cs))
             throw new Exception("User: POSTGRES_CONNECTION is not set.");
+        _kafkaProducer = kafkaProducer;
     }
     #endregion
 
@@ -36,8 +40,19 @@ public class UserRepo
     public async Task CreateUser(string email, string name)
     {
         await using var con = new NpgsqlConnection(cs);
-        var sql = "INSERT INTO users (name, email) VALUES (@name, @email)";
-        await con.ExecuteScalarAsync(sql, new { name = name, email = email });
+        string sql = "INSERT INTO users (name, email) VALUES (@name, @email)";
+        int affectedRows = await con.ExecuteAsync(sql, new { name = name, email = email });
+        if (affectedRows == 1)
+        {
+            var userRegisteredEvent = new UserRegisteredEvent
+            {
+                Name = name,
+                Email = email,
+                RegisteredAt = DateTime.UtcNow
+            };
+            await _kafkaProducer.ProduceAsync<UserRegisteredEvent>("user.registered", userRegisteredEvent);
+        }
+
         return;
     }
     #endregion
