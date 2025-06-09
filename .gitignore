@@ -22,3 +22,6 @@
 # Optional: exclude Postgres/Redis/Kafka volumes if mapped to host
 volumes/
 *.csproj.user
+
+# Ignore Visual Studio .vs folder
+.vs/

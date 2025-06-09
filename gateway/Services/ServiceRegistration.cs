@@ -70,16 +70,7 @@ public static class ServiceRegistration
             options.Scope.Clear();
             options.Scope.Add("openid");
             options.Scope.Add("email");
-            options.Scope.Add("profile");
-
-            options.Events = new OpenIdConnectEvents
-            {
-                OnRedirectToIdentityProvider = context =>
-                {
-                    context.ProtocolMessage.SetParameter("access_type", "offline");
-                    return Task.CompletedTask;
-                }
-            };
+            options.Scope.Add("profile");           
         })
         .AddJwtBearer("Bearer", jwtOptions =>
         {

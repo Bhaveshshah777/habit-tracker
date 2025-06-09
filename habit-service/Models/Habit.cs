@@ -4,12 +4,12 @@ namespace HabitService.Models;
 
 public class Habit
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
     [Required]
     public string Title { get; set; } = "";
     [Required]
     public Guid UserId { get; set; }
-
+    public string Email { get; set; } = "";
     public string? Description { get; set; }
     public int Frequency { get; set; } = 1;
     public DateTime StartDate { get; set; } = DateTime.Now;

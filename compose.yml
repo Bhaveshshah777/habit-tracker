@@ -16,6 +16,29 @@ services:
       - kafka-data:/bitnami/kafka
     networks:
       - habit-net
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "kafka-topics.sh",
+          "--bootstrap-server",
+          "localhost:9092",
+          "--list",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  kafka-topic-creator:
+    build: ./kafka-topic-creator
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
+    depends_on:
+      kafka:
+        condition: service_healthy
+    networks:
+      - habit-net
+
   postgres:
     image: postgres:17
     restart: none
@@ -30,6 +53,7 @@ services:
       - habit-net
     ports:
       - "5432:5432"
+
   migration-service:
     build: ./migration-service
     container_name: migration-container
@@ -39,6 +63,7 @@ services:
       - postgres
     networks:
       - habit-net
+
   gateway:
     build: ./gateway
     container_name: gateway-container
@@ -57,6 +82,7 @@ services:
       - habit-net
     volumes:
       - ./gateway/certs/localhost.p12:/https/localhost.p12:ro
+
   habit-service:
     build: ./habit-service
     container_name: habit-container
@@ -65,10 +91,12 @@ services:
     environment:
       - ASPNETCORE_URLS=http://+:80
       - POSTGRES_CONNECTION=${POSTGRES_CONNECTION}
+      - KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
     depends_on:
       - migration-service
     networks:
       - habit-net
+
   tracking-service:
     build: ./tracking-service
     container_name: tracking-container
@@ -81,6 +109,7 @@ services:
       - migration-service
     networks:
       - habit-net
+
   user-service:
     build: ./user-service
     container_name: user-container
@@ -89,11 +118,15 @@ services:
     environment:
       - ASPNETCORE_URLS=http://+:80
       - POSTGRES_CONNECTION=${POSTGRES_CONNECTION}
+      - KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
     depends_on:
-      - migration-service
-      - kafka
+      kafka:
+        condition: service_healthy
+      migration-service:
+        condition: service_started
     networks:
       - habit-net
+
   notification-service:
     build: ./notification-service
     container_name: notification-container
@@ -102,11 +135,13 @@ services:
     environment:
       - ASPNETCORE_URLS=http://+:80
       - POSTGRES_CONNECTION=${POSTGRES_CONNECTION}
+      - KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
     depends_on:
       - migration-service
-      - user-service
+      - kafka-topic-creator
     networks:
       - habit-net
+
   redis:
     image: redis:8.0.1-alpine
     container_name: redis

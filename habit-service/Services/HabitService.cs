@@ -1,21 +1,26 @@
 using System;
 using Dapper;
-using habit_service.Interface;
+using HabitService.Interface;
+using HabitService.Kafka.Events;
+using HabitService.Kafka.Interface;
 using HabitService.Models;
 using Npgsql;
 
-namespace habit_service.Services;
+namespace HabitService.Services;
 
 public class HabitService : IHabitService
 {
     private readonly string cs;
-    public HabitService(IConfiguration config)
+    private readonly IKafkaProducer _producer;
+
+    public HabitService(IConfiguration config, IKafkaProducer producer)
     {
         string? cs = config["POSTGRES_CONNECTION"];
         if (string.IsNullOrEmpty(cs))
             throw new Exception("Habit:Connection string missing.");
 
         this.cs = cs;
+        _producer = producer;
     }
 
     public async Task<IList<Habit>> Get(Guid user_id)
@@ -47,7 +52,21 @@ public class HabitService : IHabitService
             INSERT INTO habits (user_id, title, description, frequency, start_date, reminder_time, category) 
             VALUES (@UserId, @Title, @Description, @Frequency, @StartDate, @ReminderTime, @Category)";
         await using NpgsqlConnection conn = new NpgsqlConnection(cs);
-        await conn.ExecuteAsync(query, habit);
+        int rowsAffected = await conn.ExecuteAsync(query, habit);
+
+        if (rowsAffected == 1)
+        {
+            // Create NewHabitCreatedEvent
+            var newHabitEvent = new NewHabitCreatedEvent
+            {
+                Name = habit.Title,
+                Description = habit.Description ?? string.Empty,
+                Email = habit.Email,
+                ReminderTime = habit.ReminderTime,
+                CreatedAt = DateTime.UtcNow
+            };
+            await _producer.ProduceAsync("habit.created", newHabitEvent);
+        }
     }
 
     public async Task Update(Habit habit)

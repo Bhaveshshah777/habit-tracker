@@ -1,4 +1,4 @@
-namespace NotificationService.Kafka.Events;
+namespace NotificationService.Kafka.Event;
 
 public class UserRegisteredEvent
 {

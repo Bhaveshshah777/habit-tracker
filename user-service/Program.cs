@@ -20,7 +20,7 @@ builder.Services.AddScoped<UserRepo>();
 builder.Services.AddControllers();
 
 builder.Services.AddSingleton<IKafkaProducer>(new KafkaProducer(
-    bootstrapServer: "kafka:9092"
+    bootstrapServer: builder.Configuration["KAFKA_BOOTSTRAP_SERVERS"] ?? "kafka:9092"
 ));
 
 builder.Services.AddAuthentication("Bearer")

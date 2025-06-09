@@ -1,7 +1,7 @@
 using System;
 using HabitService.Models;
 
-namespace habit_service.Interface;
+namespace HabitService.Interface;
 
 public interface IHabitService
 {

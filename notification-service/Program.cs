@@ -1,12 +1,27 @@
+﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 using NotificationService.Kafka.Consumer;
 
-var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddHostedService<KafkaUserRegisteredConsumer>();
+try
+{
+    Host.CreateDefaultBuilder(args)
+        .ConfigureServices((context, services) =>
+        {
+            services.AddHostedService<KafkaUserRegisteredConsumer>();
+            services.AddHostedService<NewHabitConsumer>();
+        })
+        .ConfigureLogging(logging =>
+        {
+            logging.ClearProviders();
+            logging.AddConsole();
+        })
+        .Build()
+        .Run();
+}
+catch (Exception ex)
+{
+    Console.WriteLine("Fatal error starting host: " + ex);
+}
 
-var app = builder.Build();
-
-app.UseHttpsRedirection();
-app.Run();
