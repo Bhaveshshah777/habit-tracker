@@ -1,47 +1,53 @@
 habit-tracker/                     # 🚀 Root project folder
 │
-├── docker-compose.yml             # 📦 Defines all services: Redis, Kafka, microservices
+├── .env                           # 🌱 Environment variables for docker-compose
+├── docker-compose.yml             # 📦 Orchestrates all services: Kafka, Redis, App services
 │
-├── gateway/                       # 🌐 API Gateway (routes requests to other services)
-│   ├── Controllers/               # - Controllers handle incoming API requests (e.g., /login, /track)
-│   ├── Services/                  # - Any business logic, e.g., JWT validation
-│   ├── Yarp/                      # - YARP (reverse proxy) configuration for routing
-│   ├── Data/                      # - Any data models or helpers
-│   ├── Startup.cs                 # - Configures services (YARP + JWT authentication)
-│   └── Dockerfile                 # - Docker setup for Gateway
+├── gateway/                       # 🌐 API Gateway
+│   ├── Controllers/               
+│   ├── Interfaces/                
+│   ├── Middleware/                
+│   ├── Services/                  
+│   └── Dockerfile                 # ✅ Builds Gateway service
 │
-├── user-service/                  # 👤 Manages user registration, login, and JWT auth
-│   ├── Controllers/               # - API endpoints for register/login
-│   ├── Services/                  # - Auth and token logic
-│   ├── Data/                      # - DB context & models
-│   ├── Redis/                     # - Redis client for token blacklist or OTPs
-│   └── Kafka/                     # - Optional: publish UserRegistered event
+├── user-service/                  # 👤 User management and JWT auth
+│   ├── Controllers/               
+│   ├── Kafka/
+│   │   ├── Interface/
+│   │   ├── Event/
+│   │   └── Producer/
+│   ├── Models/
+│   ├── Repository/
+│   └── Dockerfile                 # ✅ Builds User service
 │
-├── habit-service/                 # ✅ Handles habit creation, update, delete
-│   ├── Controllers/               # - Endpoints for managing habits
-│   ├── Services/                  # - Habit logic (e.g., daily/weekly setup)
-│   ├── Kafka/                     # - Publishes HabitCreated events
-│   └── Data/                      # - DB models and context
+├── habit-service/                 # ✅ Habit creation & management
+│   ├── Controllers/
+│   ├── Interfaces/
+│   ├── Models/
+│   ├── Services/
+│   ├── Kafka/
+│   │   ├── Interface/
+│   │   ├── Event/
+│   │   └── Producer/
+│   └── Dockerfile                 # ✅ Builds Habit service
 │
-├── tracking-service/             # 📅 Tracks daily habit check-ins
-│   ├── Controllers/               # - Endpoints to log progress
-│   ├── Services/                  # - Business logic for streaks and history
-│   ├── Kafka/                     # - Publishes HabitTracked event
-│   └── Redis/                     # - Updates streaks in Redis for fast access
+├── tracking-service/             # 📅 Habit tracking and streaks
+│   ├── Models/
+│   ├── Services/
+│   └── Dockerfile                 # ✅ Builds Tracking service
 │
-├── notification-service/         # 🔔 Listens to Kafka & sends notifications
-│   ├── Kafka/                     # - Consumers for HabitTracked, HabitCreated
-│   ├── Redis/                     # - Reads from Redis to check streaks
-│   ├── Services/                  # - Simulates email/push messages (console/log)
-│   └── Templates/ (optional)      # - Message templates
+├── notification-service/         # 🔔 Event-driven notifications
+│   ├── Kafka/
+│   │   ├── Consumer/
+│   │   └── Event/
+│   └── Dockerfile                 # ✅ Builds Notification service
 │
-├── kafka/                        # 📡 Kafka infrastructure
-│   └── docker-compose block      # - Confluent Kafka + Zookeeper + UI
+├── kafka-topic-creator/          # 🧩 Kafka topic bootstrapper
+│   ├── Program.cs
+│   ├── appsettings.json
+│   └── Dockerfile                 # ✅ Builds Topic Creator
 │
-├── redis/                        # ⚡ Redis cache service
-│   └── docker-compose block      # - Lightweight Redis image
-|
-├── migration-service:            # 👾 Setting up the database if it doesn't exist
-│   └── Migrations                # All files containing sql
-│      └── *.sql files
-│   └── Program.cs                # the main executer of all sql files
+├── migration-service/            # 👾 Database initializer
+│   ├── Migrations/
+│   ├── Program.cs
+│   └── Dockerfile                 # ✅ Builds DB Migrator
