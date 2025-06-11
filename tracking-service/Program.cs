@@ -5,9 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<HabitTrackingService>();
+builder.Services.AddHealthChecks();
 var app = builder.Build();
 app.UseHttpsRedirection();
-app.MapGet("/", () => "Welcome to tracking service.");
+app.MapHealthChecks("/health");
 app.MapPost("/", async ([FromBody] HabitTracking model, [FromServices] HabitTrackingService service) =>
 {
     if (model == null || model.UserId == Guid.Empty || model.Habit_Id == Guid.Empty)

@@ -38,6 +38,12 @@ services:
         condition: service_healthy
     networks:
       - habit-net
+    healthcheck:
+      test: ["CMD-SHELL", "exit 0"]
+      interval: 30s
+      timeout: 5s
+      retries: 1
+      start_period: 5s
 
   postgres:
     image: postgres:17
@@ -53,6 +59,11 @@ services:
       - habit-net
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "habituser"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   migration-service:
     build: ./migration-service
@@ -63,6 +74,12 @@ services:
       - postgres
     networks:
       - habit-net
+    healthcheck:
+      test: ["CMD-SHELL", "exit 0"]
+      interval: 30s
+      timeout: 5s
+      retries: 1
+      start_period: 5s
 
   gateway:
     build: ./gateway
@@ -82,6 +99,11 @@ services:
       - habit-net
     volumes:
       - ./gateway/certs/localhost.p12:/https/localhost.p12:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "https://localhost:443/health", "--insecure"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   habit-service:
     build: ./habit-service
@@ -96,6 +118,11 @@ services:
       - migration-service
     networks:
       - habit-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   tracking-service:
     build: ./tracking-service
@@ -109,6 +136,11 @@ services:
       - migration-service
     networks:
       - habit-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   user-service:
     build: ./user-service
@@ -126,6 +158,11 @@ services:
         condition: service_started
     networks:
       - habit-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   notification-service:
     build: ./notification-service
@@ -141,6 +178,11 @@ services:
       - kafka-topic-creator
     networks:
       - habit-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   redis:
     image: redis:8.0.1-alpine
@@ -151,6 +193,11 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 networks:
   habit-net:

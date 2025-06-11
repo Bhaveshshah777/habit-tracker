@@ -16,7 +16,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.RegisterServices();
 builder.Services.AddControllers();
 
+builder.Services.AddHealthChecks();
+
 var app = builder.Build();
+
+app.MapHealthChecks("health");
 
 app.UseHttpsRedirection();
 app.UseRouting();

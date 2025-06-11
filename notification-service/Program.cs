@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using NotificationService.Kafka.Consumer;
-
+using NotificationService;
 
 try
 {
@@ -11,6 +11,8 @@ try
         {
             services.AddHostedService<KafkaUserRegisteredConsumer>();
             services.AddHostedService<NewHabitConsumer>();
+            services.AddHealthChecks();
+            services.AddHostedService<HealthCheckHttpServer>();
         })
         .ConfigureLogging(logging =>
         {

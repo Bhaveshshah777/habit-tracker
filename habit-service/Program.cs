@@ -31,16 +31,10 @@ builder.Services.AddAuthorization();
 
 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 
-//adding messages
-var messages = JsonSerializer.Deserialize<Dictionary<string, string>>(
-    File.ReadAllText("messages.json"));
-
-if (messages is null)
-    throw new Exception("Messages file is empty or not found.");
-
-builder.Services.AddSingleton(messages);
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
+app.MapHealthChecks("/health");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

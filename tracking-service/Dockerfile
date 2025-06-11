@@ -8,5 +8,9 @@ RUN dotnet publish -c Release -o /app/publish
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 EXPOSE 80
+
+# ✅ Install curl (required for Docker health check)
+RUN apt-get update && apt-get install -y curl
+
 COPY --from=build /app/publish .
 ENTRYPOINT [ "dotnet", "tracking-service.dll" ]

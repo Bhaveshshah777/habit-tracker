@@ -38,7 +38,10 @@ builder.Services.AddAuthentication("Bearer")
 
 
 builder.Services.AddAuthorization();
+builder.Services.AddHealthChecks();
+
 var app = builder.Build();
+app.MapHealthChecks("/health");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
