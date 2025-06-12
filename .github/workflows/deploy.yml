@@ -33,6 +33,16 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y docker-compose curl
 
+      - name: Create .env file from GitHub secrets
+        run: |
+          cat <<EOF > .env
+          POSTGRES_CONNECTION=${{ secrets.POSTGRES_CONNECTION }}
+          REDIS_CONNECTION=${{ secrets.REDIS_CONNECTION }}
+          KAFKA_BOOTSTRAP_SERVERS=${{ secrets.KAFKA_BOOTSTRAP_SERVERS }}
+          GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+          EOF
+
       - name: Build and start services
         run: docker-compose -f compose.yml up -d --build
 
