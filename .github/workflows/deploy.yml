@@ -44,7 +44,7 @@ jobs:
           EOF
 
       - name: Build and start services
-        run: docker-compose -f compose.yml up -d --build
+        run: docker compose down; docker compose up --build
 
       - name: Wait for services to be healthy
         run: |
