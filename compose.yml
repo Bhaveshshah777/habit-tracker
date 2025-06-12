@@ -47,7 +47,7 @@ services:
 
   postgres:
     image: postgres:17
-    restart: none
+    restart: no
     container_name: habit-db
     environment:
       POSTGRES_USER: habituser
